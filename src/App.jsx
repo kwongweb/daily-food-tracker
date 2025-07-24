@@ -1,11 +1,18 @@
-
 import React, { useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 function App() {
   const [history, setHistory] = useState([]);
   const [today, setToday] = useState({
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toLocaleDateString(),
     breakfast: "",
     lunch: "",
     dinner: "",
@@ -61,9 +68,10 @@ function App() {
 
   const handleSave = () => {
     const score = calculateWeightedScore();
-    setHistory([{ ...today, score }, ...history]);
+    const localDate = new Date().toLocaleDateString();
+    setHistory([{ ...today, date: localDate, score }, ...history]);
     setToday({
-      date: new Date().toISOString().slice(0, 10),
+      date: localDate,
       breakfast: "",
       lunch: "",
       dinner: "",
@@ -81,7 +89,15 @@ function App() {
   const exportCSV = () => {
     const headers = "Date,Breakfast,Lunch,Dinner,Snacks,Desserts,Score\n";
     const rows = history.map((entry) =>
-      [entry.date, entry.breakfast, entry.lunch, entry.dinner, entry.snacks, entry.desserts, entry.score].join(",")
+      [
+        entry.date,
+        entry.breakfast,
+        entry.lunch,
+        entry.dinner,
+        entry.snacks,
+        entry.desserts,
+        entry.score,
+      ].join(",")
     );
     const csv = headers + rows.join("\n");
 
@@ -111,7 +127,9 @@ function App() {
       <div className="space-y-4 border p-4 rounded-lg">
         {["breakfast", "lunch", "dinner"].map((meal) => (
           <div key={meal} className="flex items-center justify-between">
-            <label className="capitalize">{meal.charAt(0).toUpperCase() + meal.slice(1)}:</label>
+            <label className="capitalize">
+              {meal.charAt(0).toUpperCase() + meal.slice(1)}:
+            </label>
             <select
               value={today[meal]}
               onChange={(e) =>
@@ -159,16 +177,22 @@ function App() {
           Save Entry
         </button>
 
-        <p className="text-lg font-medium">Today's Score (so far): {todayScore} / 100</p>
+        <p className="text-lg font-medium">
+          Today's Score (so far): {todayScore} / 100
+        </p>
 
         {todayScore === 100 && (
           <p className="text-green-600 font-bold">🌟 Perfect Day!</p>
         )}
         {todayScore >= 90 && todayScore < 100 && (
-          <p className="text-blue-600 font-semibold">👍 Still Doing Well!</p>
+          <p className="text-blue-600 font-semibold">
+            👍 Still Doing Well!
+          </p>
         )}
         {todayScore < 90 && todayScore > 0 && (
-          <p className="text-red-600 font-semibold">🚧 Don't Pop All the Tires!</p>
+          <p className="text-red-600 font-semibold">
+            🚧 Don't Pop All the Tires!
+          </p>
         )}
       </div>
 
@@ -203,7 +227,10 @@ function App() {
         </ResponsiveContainer>
         <ul className="space-y-1 pt-3">
           {history.map((entry, idx) => (
-            <li key={idx} className="flex justify-between items-center border-b pb-1">
+            <li
+              key={idx}
+              className="flex justify-between items-center border-b pb-1"
+            >
               <span>
                 {entry.date}: {entry.score}
               </span>
